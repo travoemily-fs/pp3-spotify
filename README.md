@@ -127,3 +127,4 @@ If you would prefer to run the application through Docker, just run through thes
 
 - [Concurrently package](https://www.npmjs.com/package/concurrently)
 - [Ngrok package](https://ngrok.com/docs/getting-started/)
+- [Spotify Authorization Code Flow](https://developer.spotify.com/documentation/web-api/tutorials/code-flow)
