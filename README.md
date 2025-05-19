@@ -126,5 +126,11 @@ If you would prefer to run the application through Docker, just run through thes
 > The following docs and sources were consulted during the development of this project:
 
 - [Concurrently package](https://www.npmjs.com/package/concurrently)
+- [Constructing Models with Sequelize](https://github.com/travoemily-fs/asl-space/tree/main/src/models)
+  - [Additional help](https://nodejs.org/api/fs.html#fs_fs_readdirsync_path_options)
 - [Ngrok package](https://ngrok.com/docs/getting-started/)
+- [OAuth Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750)
+  - [Additional help](https://www.geeksforgeeks.org/json-web-token-jwt/)
 - [Spotify Authorization Code Flow](https://developer.spotify.com/documentation/web-api/tutorials/code-flow)
+- [Wait-for-it.sh script](https://github.com/vishnubob/wait-for-it)
+  - [Additional help](https://medium.com/@krishnaregmi/wait-for-it-docker-compose-f0bac30f3357)

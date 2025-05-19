@@ -1,0 +1,41 @@
+services:
+  mysql_db:
+    image: mysql:8.0.36
+    restart: always
+    networks:
+      - pp3spotify
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASS}
+      - MYSQL_DATABASE=${DB_NAME}
+
+  node_app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    user: node
+    working_dir: /app
+    networks:
+      - pp3spotify
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./backend:/app
+    ports:
+      - 3001:3001
+    command: >
+      sh -c "./wait-for-it.sh mysql_db:3306 -- npm start"
+    restart: always
+    stdin_open: true
+    tty: true
+    depends_on:
+      - mysql_db
+
+networks:
+  pp3spotify:
+
+volumes:
+  mysql_data:
