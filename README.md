@@ -134,3 +134,9 @@ If you would prefer to run the application through Docker, just run through thes
 - [Spotify Authorization Code Flow](https://developer.spotify.com/documentation/web-api/tutorials/code-flow)
 - [Wait-for-it.sh script](https://github.com/vishnubob/wait-for-it)
   - [Additional help](https://medium.com/@krishnaregmi/wait-for-it-docker-compose-f0bac30f3357)
+
+## Components
+
+> The following UI components were used to create this project:
+
+- [Glowing card border](https://uiverse.io/ElSombrero2/tricky-robin-67)

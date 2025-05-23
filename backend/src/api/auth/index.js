@@ -17,7 +17,7 @@ const {
 router.get("/login", loginHandler);
 router.get("/callback", callbackHandler);
 router.get("/me", meHandler);
-router.get("/refresh", refreshHandler);
+router.post("/refresh", refreshHandler);
 
 // export routes
 module.exports = router;

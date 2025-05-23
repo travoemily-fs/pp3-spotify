@@ -1,35 +1,63 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// import react assets
+import { Routes, Route } from "react-router-dom";
+import "./App.css";
+// import grommet assets
+import { Grommet } from "grommet";
+// import routes
+import Login from "./pages/Login";
+import NotFound from "./pages/NotFound";
+import Dashboard from "./pages/Dashboard";
 
-function App() {
-  const [count, setCount] = useState(0)
+// define custom theme
+const theme = {
+  global: {
+    colors: {
+      text: "primaryText",
+      primaryBackground: "#121212",
+      secondaryBackground: "#2A2A2A",
+      primaryText: "#F8F8F8",
+      attnAccent: "#1DB954",
+      attnAccentLight: "rgba(29, 185, 84, 0.19)",
+      attnAccentShadow: "rgba(29, 185, 84, 0.08)",
+      highlight: "#3EFFA8",
+      innerHighlight: "#3EFFA8",
+      secondaryAccent: "#65FFC9",
+    },
+    font: {
+      family: "quasimoda",
+      size: "16px",
+    },
+    elevation: {
+      dark: {
+        small: `inset 0px 0px 5px .5px var(--color-inner-highlight),
+        inset 0px 0px 20px 1px var(--color-attn-accent-light),
+        0px 0px 1px var(--color-attn-accent),
+        0px 2px 10px var(--color-attn-accent-shadow)`,
+        medium: `inset 0px 0px 10px .75px var(--color-inner-highlight),
+        inset 0px 0px 20px 1px var(--color-attn-accent-light),
+        0px 0px 2px var(--color-attn-accent),
+        0px 2px 10px var(--color-attn-accent-shadow)`,
+        large: `inset 0px 0px 15px 1px var(--color-inner-highlight),
+        inset 0px 0px 20px 1px var(--color-attn-accent-light),
+        0px 0px 4px var(--color-attn-accent),
+        0px 2px 15px var(--color-attn-accent-shadow)`,
+      },
+    },
+    button: {
+      primary: {},
+    },
+  },
+};
 
+// begin app shell wrapped in grommet
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Grommet full theme={theme}>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Grommet>
+  );
 }
-
-export default App

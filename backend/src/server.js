@@ -4,6 +4,8 @@ const express = require("express");
 const app = express();
 // pull in authorization routes
 const authRoutes = require("./api/auth");
+// pull in search routes
+const searchRoutes = require("./api/search");
 const db = require("./db");
 const sequelize = db.sequelize;
 
@@ -21,6 +23,8 @@ const SECRET = process.env.JWT_SECRET;
     console.log("Tables synced successfully with models.");
   // use auth routes
     app.use("/api/auth", authRoutes);
+      // use search routes
+    app.use("/api/search", searchRoutes);
   // verify server is live
     app.get("/", (req, res) => {
       res.send(`Congrats! The server is up and running on port ${PORT}.`);
