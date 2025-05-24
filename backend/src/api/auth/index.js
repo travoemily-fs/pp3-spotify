@@ -12,12 +12,14 @@ const {
   meHandler,
   refreshHandler,
 } = require("./controller");
+// pull in middleware routes for protection
+const { validateTokenStatus } = require("./middleware");
 
 // define routes
 router.get("/login", loginHandler);
 router.get("/callback", callbackHandler);
-router.get("/me", meHandler);
-router.post("/refresh", refreshHandler);
+router.get("/me", validateTokenStatus, meHandler);
+router.post("/refresh", validateTokenStatus, refreshHandler);
 
 // export routes
 module.exports = router;

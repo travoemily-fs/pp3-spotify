@@ -3,6 +3,8 @@ helper functions live here
 createJWT
 verifyJWT
 extractJWT
+
+note for self: utility functions are reusable and are not tied to express; they are responsible for signing tokens, verifying tokens, or formatting 
 */
 
 // pull in needed imports
