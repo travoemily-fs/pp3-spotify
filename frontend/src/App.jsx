@@ -12,16 +12,17 @@ import Dashboard from "./pages/Dashboard";
 const theme = {
   global: {
     colors: {
-      text: "primaryText",
+      text: "#F8F8F8",
       primaryBackground: "#121212",
       secondaryBackground: "#2A2A2A",
       primaryText: "#F8F8F8",
       attnAccent: "#1DB954",
       attnAccentLight: "rgba(29, 185, 84, 0.19)",
       attnAccentShadow: "rgba(29, 185, 84, 0.08)",
-      highlight: "#3EFFA8",
+      highlight: "#61c878",
       innerHighlight: "#3EFFA8",
       secondaryAccent: "#65FFC9",
+      focus: "rgba(29, 185, 84, 0.25)",
     },
     font: {
       family: "quasimoda",
@@ -29,10 +30,10 @@ const theme = {
     },
     elevation: {
       dark: {
-        small: `inset 0px 0px 5px .5px var(--color-inner-highlight),
-        inset 0px 0px 20px 1px var(--color-attn-accent-light),
-        0px 0px 1px var(--color-attn-accent),
-        0px 2px 10px var(--color-attn-accent-shadow)`,
+        small: `
+        inset 1px 0px 8px  rgba(29, 185, 84, 0.09),
+        inset -.5px -.5px 20px rgba(255, 255, 255, 0.02),
+        0px 2px 50px var(--color-attn-accent-shadow)`,
         medium: `inset 0px 0px 10px .75px var(--color-inner-highlight),
         inset 0px 0px 20px 1px var(--color-attn-accent-light),
         0px 0px 2px var(--color-attn-accent),
@@ -45,6 +46,15 @@ const theme = {
     },
     button: {
       primary: {},
+    },
+    focus: {
+      border: {
+        color: "focus",
+      },
+      shadow: {
+        color: "focus",
+        size: "2px",
+      },
     },
   },
 };

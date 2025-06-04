@@ -139,4 +139,4 @@ If you would prefer to run the application through Docker, just run through thes
 
 > The following UI components were used to create this project:
 
-- [Glowing card border](https://uiverse.io/ElSombrero2/tricky-robin-67)
+- [Music Loader](https://codepen.io/antoniasymeonidou/pen/bGawzLo)

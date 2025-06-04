@@ -32,7 +32,7 @@ export default function Login() {
           background="primaryBackground"
           round="small"
           elevation="small"
-          border={{ color: "attnAccent", size: ".5px" }}>
+          border={{ color: "attnAccentShadow", size: "1px" }}>
           <CardHeader justify="center" align="center" height="xsmall">
             login
           </CardHeader>

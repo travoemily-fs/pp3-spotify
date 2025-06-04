@@ -48,3 +48,8 @@ a {
 .formField {
   border: none;
 }
+
+input::placeholder {
+  color: white;
+  opacity: 1;
+}
