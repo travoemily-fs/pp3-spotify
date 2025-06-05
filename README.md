@@ -139,4 +139,4 @@ If you would prefer to run the application through Docker, just run through thes
 
 > The following UI components were used to create this project:
 
-- [Music Loader](https://codepen.io/antoniasymeonidou/pen/bGawzLo)
+- [Animated Gradient Background](https://codepen.io/P1N2O/pen/pyBNzX)

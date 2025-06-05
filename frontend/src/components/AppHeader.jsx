@@ -1,8 +1,6 @@
 // import grommet components
 import { Header, Box, Text } from "grommet";
 
-
-
 export default function AppHeader() {
   return (
     <Header
@@ -21,7 +19,7 @@ export default function AppHeader() {
         gap="small"
         align="center"
         style={{
-          paddingTop:"6px"
+          paddingTop:"6px",
         }}>
 
             <Text
@@ -29,13 +27,17 @@ export default function AppHeader() {
               fontWeight:"800",
               textShadow:".5px .5px 0px rgba(42, 42, 42, 0.29)",
               letterSpacing:"-.5px",
+              fontSize:"1.4rem"
             }}>
                 playlister.
             </Text>
             <Text
             style={{
               fontSize:".9rem",
-              marginLeft:"2rem"
+              marginLeft:"4rem",
+              marginTop:".5rem",
+              color:"#3effa8",
+              fontStyle:"italic"
             }}>
               find, create, and share your spotify playlists.
             </Text>
