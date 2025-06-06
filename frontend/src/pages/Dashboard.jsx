@@ -1,5 +1,6 @@
 // import react components
 import { useState } from "react";
+import { useEffect } from "react";
 // import grommet components
 import { Box, Grid, Text } from "grommet";
 // import needed components
@@ -10,6 +11,17 @@ import Player from "../components/Player";
 
 // begin dashboard setup
 export default function Dashboard() {
+  // fetch the token that spotify sends
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+    // check for tokens and assignments them
+    if(token) {
+      localStorage.setItem("token", token);
+      // clean up the return
+      window.history.replaceState({}, document.title, "/dashboard")
+    } 
+  }, []);
   // set player to default for now
   const [view, setView] = useState("player");
   // mock data

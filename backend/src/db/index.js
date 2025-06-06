@@ -1,10 +1,12 @@
 "use strict";
+
+// import core node + sequelize modules
 const fs = require("fs");
-const path = require("path")
+const path = require("path");
 const { Sequelize } = require("sequelize");
 const basename = path.basename(__filename);
 
-// initialize sequelize
+// initialize sequelize instance
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
@@ -16,19 +18,22 @@ const sequelize = new Sequelize(
   }
 );
 
-// initialize an empty db object to store models
+// create db object to hold models and sequelize reference
 const db = {};
 
-// read the model files 
-fs.readdirSync(__dirname)
-  .filter((file) => file !== basename && file.endsWith(".js"))
+// read and register all model files in this directory
+fs.readdirSync(path.join(__dirname, "models"))
+  .filter((file) => file.endsWith(".js"))
   .forEach((file) => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
+    const modelFn = require(path.join(__dirname, "models", file));
+    const model = modelFn(sequelize, Sequelize.DataTypes);
+    console.log("Loaded model:", model?.name);
     db[model.name] = model;
   });
 
-  // attach both sequelize references 
-  db.sequelize = sequelize;
-  db.Sequelize = Sequelize;
+// attach sequelize references
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-  module.exports = db;
+// export the db object
+module.exports = db;

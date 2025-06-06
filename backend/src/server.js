@@ -13,7 +13,7 @@ const db = require("./db");
 // pull in sequelize
 const sequelize = db.sequelize;
 // pull in global error handler
-const errorHandler = require("./api/auth/middleware");
+const { errorHandler } = require("./api/auth/middleware");
 
 // pull in .env variables
 const PORT = process.env.PORT || 3001;

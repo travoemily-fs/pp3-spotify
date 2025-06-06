@@ -30,12 +30,13 @@ export default function Player() {
         boxShadow:
           "0px 2px 2px rgba(0, 2, 0, 0.13), inset 0px 0px 2px rgba(0, 2, 0, 0.13), inset 0px 0px 2px rgba(255, 255, 255, 0.09), inset 0px 2px 16px  rgba(62, 255, 168, 0.06)",
         paddingBottom: "35px",
-        maxWidth: "450px",
-        width: "35%",
+        maxWidth: "400px",
+        width: "40%",
+        overflow:"hidden"
       }}>
       {/* top accent bg w/ fave + add to playlist btns */}
       <Box
-        background="blue"
+        className="container"
         width="100%"
         height="175px"
         round={{ corner: "top", size: "small" }}

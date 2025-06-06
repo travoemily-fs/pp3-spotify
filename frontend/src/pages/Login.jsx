@@ -1,15 +1,5 @@
 // import grommet components
-import {
-  Box,
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Form,
-  FormField,
-  TextInput,
-} from "grommet";
+import { Box, Button, Card, CardHeader, CardBody, CardFooter } from "grommet";
 
 // begin login setup
 export default function Login() {
@@ -33,38 +23,28 @@ export default function Login() {
           round="small"
           elevation="small"
           border={{ color: "attnAccentShadow", size: "1px" }}>
-          <CardHeader justify="center" align="center" height="xsmall">
-            login
+          <CardHeader
+            justify="center"
+            align="center"
+            height="xsmall"
+            direction="column"
+            style={{
+              fontWeight: "800",
+              fontSize: "1.2rem",
+            }}>
+            playlister.
           </CardHeader>
           <CardBody align="center" justify="center">
-            <Form justify="center">
-              <FormField
-                name="email"
-                htmlFor="text-input-id"
-                label="email"
-                className="formField"
-                width="small">
-                <TextInput
-                  name="email"
-                  placeholder="you@you.com"
-                  focus="attnAccent"
-                />
-              </FormField>
-              <FormField
-                name="password"
-                htmlFor="text-input-id"
-                label="password"
-                width="small"
-                justify="center"
-                align="center">
-                <TextInput
-                  name="password"
-                  placeholder="*****"
-                  type="password"
-                  focus="attnAccent"
-                />
-              </FormField>
-            </Form>
+            <p
+              style={{
+                color: "#3effa8",
+                fontStyle: "italic",
+                marginTop: "-25px",
+                fontSize: ".9rem",
+              }}>
+              find, create, and share your spotify playlists.
+            </p>
+            login with spotify to get started!
           </CardBody>
           <CardFooter
             justify="center"
@@ -72,7 +52,15 @@ export default function Login() {
             align="center"
             height="xsmall"
             pad={{ bottom: "small" }}>
-            <Button label="log in" primary/>
+            <Button
+              label="log in"
+              primary
+              onClick={() => {
+                window.location.href = `${
+                  import.meta.env.VITE_BACKEND_URL
+                }/api/auth/login`;
+              }}
+            />
           </CardFooter>
         </Card>
       </Box>

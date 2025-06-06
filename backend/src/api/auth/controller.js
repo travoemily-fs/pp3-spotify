@@ -88,6 +88,7 @@ const callbackHandler = async (req, res) => {
         refreshToken: refresh_token,
       },
     });
+
     // updates tokens after repeated logins
     if (!created) {
       await user.update({
@@ -96,11 +97,8 @@ const callbackHandler = async (req, res) => {
       });
     }
     const token = createToken(user);
-    // send token to spotify TESTING ONLY
-    res.json({ token });
-
-    // sends success redirect response PRODUCTION ONLY
-    // res.redirect(`/dashboard?token=${token}`);
+    // sends success redirect response
+    res.redirect(`http://localhost:3000/dashboard?token=${token}`);
   } catch (err) {
     // check for response data from spotify to log, otherwise print generic error
     console.error(
