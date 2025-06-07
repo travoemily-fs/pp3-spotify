@@ -29,6 +29,7 @@ It uses:
 - JSON Web Tokens for authentication
 - Node.js + Express on the backend
 - React + Vite on the frontend
+- Grommet design framework
 - Sequelize + MySQL for persistent data
 
 ![Spotify](https://img.shields.io/badge/Spotify-1ED760?style=for-the-badge&logo=spotify&logoColor=white)
@@ -39,69 +40,109 @@ It uses:
 
 ## 🛠️ Getting Started
 
-This application requires the following software installed on your machine:
+> ⚠️ Ports 3000 and 3001 **must** be open to host and run this program. Make sure that you don't have any other applications running on these ports _before_ you attempt launching.
 
-- Docker & Docker Compose
-- Node.js & npm (for frontend)
+- [Deploy locally](#-local-deployment)
+  - [Individual deployment](#individual-deployment)
+- [Deploy with Docker](#-docker-deployment)
+
+This application requires the following software & packages installed on your device **_prior_** to use:
+
+- Docker
+- NodeJs
+- Yarn
+- NPM
+- Chrome (recommended) _or_ Firefox, Opera GX, Edge, Safari
+
+**For Mac OS users:**
+
+- Brew
 - Ngrok CLI
-- A Spotify Developer account with a registered app
+  - [Install instructions](https://ngrok.com/download)
 
-## 🐳 Docker Deployment
+You must also:
+- [Reserve a subdomain in ngrok](https://dashboard.ngrok.com/cloud-edge/domains)
+- Add that same URL to your Spotify app dashboard as your redirect URI
+- Reference it inside your `backend/.env` and `frontend/.env`
 
-### 1. Clone the repo
+## Local Deployment
 
+After installing all prerequisites, you're now ready to set up your project environment with an `.env` file. You can accomplish this by following these easy steps:
+
+1. Make a copy of the pre-existing `.env.dist` file
+2. Rename that file to `.env` inside both `backend/` and `frontend/`
+
+**Copy and paste version:**
+
+```bash
+cp backend/.env.dist backend/.env && cp frontend/.env.dist frontend/.env
 ```
-git clone https://github.com/your-username/pp3-spotify.git
-cd pp3-spotify
-```
 
-### 2. Create environment files
+Then update your environment values as follows:
 
-Create a `.env` file inside `backend/`:
+### `backend/.env`
 
-```
+```env
 SPOTIFY_CLIENT_ID=your_spotify_client_id
 SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
-SPOTIFY_REDIRECT_URI=https://<your-ngrok-url>.ngrok-free.app/api/auth/callback
-JWT_SECRET=some_secret_here
+SPOTIFY_REDIRECT_URI=https://your-ngrok-subdomain.ngrok-free.app/api/auth/callback
+JWT_SECRET=your_custom_secret
 DB_NAME=pp3spotify
 DB_USER=root
 DB_PASS=example
 ```
 
-Create a `.env` file inside `frontend/`:
+### `frontend/.env`
 
-```
-VITE_BACKEND_URL=https://<your-ngrok-url>.ngrok-free.app
+```env
+VITE_BACKEND_URL=https://your-ngrok-subdomain.ngrok-free.app
 ```
 
-### 3. Start the backend via Docker
+### Global ngrok config (optional)
 
+To avoid restarting ngrok manually every time, create `~/.ngrok2/ngrok.yml` with:
+
+```yaml
+tunnels:
+  playlister:
+    addr: 3001
+    proto: http
+    hostname: your-ngrok-subdomain.ngrok-free.app
 ```
+
+Then just run:
+
+```bash
+ngrok start playlister
+```
+
+## Docker Deployment
+
+To start the full app:
+
+```bash
 docker compose up --build
 ```
 
-### 4. Start ngrok
+Then separately in another terminal, run ngrok using:
 
+```bash
+ngrok start playlister
 ```
-ngrok http 3001
-```
 
-Use the generated URL in both your Spotify Developer dashboard **and** your `.env` files.
+Once ngrok is running and both `.env` files point to the same subdomain, you can start the frontend:
 
-### 5. Start the frontend
-
-```
+```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Then open http://localhost:3000 and click "Log In".
+Visit [http://localhost:3000](http://localhost:3000) to log in.
 
 ## 💡 Extra Considerations
 
-- Ports `3000` and `3001` must be available before running the app
+- Make sure that `3000` and `3001` are available before running the app
 - The backend connects to MySQL via Docker's internal network alias `mysql_db`
 - If you close ngrok, you'll need to update `.env` and the Spotify redirect URI again
 
@@ -124,3 +165,4 @@ Then open http://localhost:3000 and click "Log In".
 - [Animated Background by @P1N2O](https://codepen.io/P1N2O/pen/pyBNzX)
 - [Grommet UI Components](https://v2.grommet.io/components)
 - React Icons & Custom CSS Modules
+

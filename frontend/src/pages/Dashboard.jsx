@@ -11,19 +11,48 @@ import Player from "../components/Player";
 
 // begin dashboard setup
 export default function Dashboard() {
+  // useState for search results
+  const [results, setResults] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   // fetch the token that spotify sends
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
     // check for tokens and assignments them
-    if(token) {
+    if (token) {
       localStorage.setItem("token", token);
       // clean up the return
-      window.history.replaceState({}, document.title, "/dashboard")
-    } 
+      window.history.replaceState({}, document.title, "/dashboard");
+    }
   }, []);
+
+  // define the handleSearch function here
+  const handleSearch = async (query) => {
+    setLoading(true);
+    setError(null);
+
+    // bring in token saved in local storage
+    const token = localStorage.getItem("token");
+
+    // begin try/catch block for error handling
+    try {
+
+    } catch (err) {
+      // log console error
+      console.error(err);
+      // display error for user
+      setError("Search failed... please try again!")
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
   // set player to default for now
   const [view, setView] = useState("player");
+
   // mock data
   const mockTrack = {
     id: "1",
