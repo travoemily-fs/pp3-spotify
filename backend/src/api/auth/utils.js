@@ -21,8 +21,8 @@ const createToken = (user) => {
     email: user.email,
   };
 
-  // create jwt with sign() method w/ payload + jwt secret
-  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+  // create and return jwt
+  return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
 };
@@ -50,7 +50,9 @@ const verifyToken = (authHeader) => {
 // refreshToken
 const getRefreshToken = async (refreshToken) => {
   // define auth header by extracting client id + client secret
-const authHeader = Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).toString("base64");
+  const authHeader = Buffer.from(
+    `${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`
+  ).toString("base64");
 
   // define response params
   const response = await fetch("https://accounts.spotify.com/api/token", {
@@ -61,16 +63,16 @@ const authHeader = Buffer.from(`${SPOTIFY_CLIENT_ID}:${SPOTIFY_CLIENT_SECRET}`).
     },
     body: new URLSearchParams({
       grant_type: "refresh_token",
-      refresh_token: refreshToken
+      refresh_token: refreshToken,
     }),
   });
-  // send response params to spotify 
+  // send response params to spotify
   const data = await response.json();
   return data;
-}
+};
 
 module.exports = {
   createToken,
   verifyToken,
-  getRefreshToken
+  getRefreshToken,
 };

@@ -1,8 +1,23 @@
+// import react components
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 // import grommet components
 import { Box, Button, Card, CardHeader, CardBody, CardFooter } from "grommet";
 
 // begin login setup
 export default function Login() {
+  // set up redirect logic and saving token
+  const navigate = useNavigate();
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token");
+    // if token is found then save it to storage
+    if (token) {
+      localStorage.setItem("token", token);
+      window.history.replaceState({}, document.title, "/dashboard");
+      navigate("/dashboard");
+    }
+  }, []);
   return (
     <Box
       fill="vertical"

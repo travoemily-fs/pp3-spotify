@@ -6,6 +6,8 @@ validateLoginForm
 
 note for self: middleware functions bridge the request and the route. it checks authentication, formats data, and add things to a request object
 */
+// pull in verifyToken helper
+const { verifyToken } = require("./utils");
 
 // validate token middleware
 const validateTokenStatus = async (req, res, next) => {
@@ -66,7 +68,6 @@ const errorHandler = async (err, req, res, next) => {
     error: message,
   });
 };
-
 
 module.exports = {
   validateTokenStatus,

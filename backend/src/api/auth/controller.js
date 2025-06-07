@@ -98,7 +98,8 @@ const callbackHandler = async (req, res) => {
     }
     const token = createToken(user);
     // sends success redirect response
-    res.redirect(`http://localhost:3000/dashboard?token=${token}`);
+    console.log("Generated JWT:", token);
+    res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
   } catch (err) {
     // check for response data from spotify to log, otherwise print generic error
     console.error(

@@ -15,6 +15,8 @@ export default function Dashboard() {
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  // create state for chosen track
+  const [selectedTrack, setSelectedTrack] = useState(null);
 
   // fetch the token that spotify sends
   useEffect(() => {
@@ -38,32 +40,47 @@ export default function Dashboard() {
 
     // begin try/catch block for error handling
     try {
+      // create a dynamic url that encodes search results by pulling in .env variables
+      console.log(
+        "Requesting:",
+        `${import.meta.env.VITE_BACKEND_URL}/api/search?q=${encodeURIComponent(
+          query
+        )}`
+      );
+      console.log("Token in use:", token);
 
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/search?q=${encodeURIComponent(
+          query
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          credentials: "include", // make sure u include ur headers
+        }
+      );
+
+      // check for errors
+      if (!res.ok) throw new Error("Search failed.");
+      // print search results
+      const data = await res.json();
+      setResults(data);
+      setView("results");
     } catch (err) {
       // log console error
       console.error(err);
       // display error for user
-      setError("Search failed... please try again!")
+      setError("Search failed... please try again!");
     } finally {
       setLoading(false);
     }
-  }
-
+  };
 
   // set player to default for now
   const [view, setView] = useState("player");
 
-  // mock data
-  const mockTrack = {
-    id: "1",
-    name: "Guess",
-    artist: "Charli XCX, Billie Eilish",
-    album: {
-      cover: "https://i.scdn.co/image/ab67616d00001e02d06d6b32cd3082e8aa8e8c4f",
-      name: "CRASH (Deluxe)",
-    },
-    duration_ms: 192000,
-  };
   return (
     <Box fill direction="column" width="100vw" pad="none" margin="none">
       <AppHeader />
@@ -77,7 +94,7 @@ export default function Dashboard() {
             { name: "main", start: [0, 1], end: [0, 1] },
           ]}>
           <Box gridArea="search" align="center" justify="center" pad="large">
-            <Search />
+            <Search onSearch={handleSearch} />
           </Box>
           <Box
             gridArea="main"
@@ -85,8 +102,19 @@ export default function Dashboard() {
             pad="medium"
             align="center"
             justify="center">
-            {view === "results" && <Results setView={setView} />}
-            {view === "player" && <Player track={mockTrack} />}
+            {view === "results" && (
+              <Results
+                results={results}
+                loading={loading}
+                error={error}
+                setView={setView}
+                onSelect={setSelectedTrack}
+              />
+            )}
+
+            {view === "player" && selectedTrack && (
+              <Player track={selectedTrack} />
+            )}
           </Box>
         </Grid>
       </Box>
