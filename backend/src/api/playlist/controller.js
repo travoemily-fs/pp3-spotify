@@ -276,17 +276,23 @@ const sharePlaylistHandler = async (req, res) => {
 
 // favorite/like track
 const faveTrackHandler = async (req, res) => {
-  // get user's access token via req.user
-  const token = req.user.accessToken;
+  // extract track ids from req.body
+  const { trackIds } = req.body;
+
+  // debug log to confirm receipt of track IDs
+  console.log("faveTrackHandler called");
+  console.log("Track IDs received:", trackIds);
+
+  // look up user's Spotify access token via DB
+  const dbUser = await User.findByPk(req.user.id);
+
   // fallback for token errors
-  if (!token) {
+  if (!dbUser || !dbUser.accessToken) {
     // handle w/ a 401 unauthorized error
     return res.status(401).json({
       error: "Invalid or missing access token.",
     });
   }
-  // extract track ids from req.body
-  const { trackIds } = req.body;
 
   // verify inputs like trackId, array input, and populated array
   if (!trackIds || !Array.isArray(trackIds) || trackIds.length === 0) {
@@ -295,6 +301,7 @@ const faveTrackHandler = async (req, res) => {
       error: "Trackids must be in a populated array.",
     });
   }
+
   // begin try/catch block
   try {
     // make axios.put() req to /me endpoint
@@ -303,7 +310,7 @@ const faveTrackHandler = async (req, res) => {
       { ids: trackIds },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${dbUser.accessToken}`,
           "Content-Type": "application/json",
         },
       }

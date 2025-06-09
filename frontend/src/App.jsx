@@ -29,21 +29,21 @@ const theme = {
       size: "16px",
     },
     elevation: {
-      dark: {
-        small: `
-        inset 1px 0px 8px  rgba(29, 185, 84, 0.09),
-        inset -.5px -.5px 20px rgba(255, 255, 255, 0.02),
-        0px 2px 50px var(--color-attn-accent-shadow)`,
-        medium: `inset 0px 0px 10px .75px var(--color-inner-highlight),
-        inset 0px 0px 20px 1px var(--color-attn-accent-light),
-        0px 0px 2px var(--color-attn-accent),
-        0px 2px 10px var(--color-attn-accent-shadow)`,
-        large: `inset 0px 0px 15px 1px var(--color-inner-highlight),
-        inset 0px 0px 20px 1px var(--color-attn-accent-light),
-        0px 0px 4px var(--color-attn-accent),
-        0px 2px 15px var(--color-attn-accent-shadow)`,
-      },
-    },
+  dark: {
+    small: `
+      inset 0px 0px 6px rgba(29, 185, 84, 0.05),
+      inset 0px 0px 10px rgba(255, 255, 255, 0.01),
+      0px 1px 20px var(--color-attn-accent-shadow)`,
+    medium: `inset 0px 0px 10px .75px var(--color-inner-highlight),
+      inset 0px 0px 20px 1px var(--color-attn-accent-light),
+      0px 0px 2px var(--color-attn-accent),
+      0px 2px 10px var(--color-attn-accent-shadow)`,
+    large: `inset 0px 0px 15px 1px var(--color-inner-highlight),
+      inset 0px 0px 20px 1px var(--color-attn-accent-light),
+      0px 0px 4px var(--color-attn-accent),
+      0px 2px 15px var(--color-attn-accent-shadow)`
+  }
+},
     button: {
       primary: {},
     },

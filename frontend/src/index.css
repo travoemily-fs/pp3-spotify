@@ -17,7 +17,8 @@
   line-height: 1.5;
   font-weight: 400;
   color: var(--color-primary-text);
-  background-color: var(--color-primary-background);
+  background-color: #121212;
+  background:radial-gradient(ellipse at bottom, #010906 0%, #121212 100%);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -37,7 +38,7 @@ body,
 *,
 *::before,
 *::after {
-  box-sizing: border-box;
+  box-sizing: content-box;
 }
 
 a {

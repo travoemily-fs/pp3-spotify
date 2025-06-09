@@ -22,7 +22,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 // login handler
 const loginHandler = (req, res) => {
   // define spotify scope
-  const scope = "user-read-private user-read-email";
+  const scope = "user-library-modify user-read-private user-read-email";
   // use URLSearchParams to build out query string
   const params = new URLSearchParams({
     response_type: "code",

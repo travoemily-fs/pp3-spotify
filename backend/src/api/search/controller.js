@@ -21,7 +21,6 @@ const searchHandler = async (req, res) => {
     // grab query string & authorization header
     const authHeader = req.headers.authorization;
     const searchQuery = req.query.q;
-    const searchType = req.query.type;
 
     // define allowed search types
     const allowedTypes = [
@@ -35,7 +34,7 @@ const searchHandler = async (req, res) => {
     ];
 
     // set types a user will search for
-    const singleType = req.query.type || "artist,album,track";
+    const singleType = req.query.type || "track";
 
     // split type array into a string to filter through accepted types
     const searchTypeArray = singleType
@@ -58,6 +57,7 @@ const searchHandler = async (req, res) => {
     const queryParams = {
       q: searchQuery,
       type: searchTypeArray.join(","),
+      limit: 20,
     };
 
     // send search to spotify w/ user's token

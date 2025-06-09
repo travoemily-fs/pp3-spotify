@@ -22,18 +22,18 @@ module.exports = (sequelize) => {
         allowNull: true,
       },
       accessToken: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
       },
       refreshToken: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
       },
     },
     {
       sequelize,
-      modelName: "User", 
-      tableName: "users", 
+      modelName: "User",
+      tableName: "users",
       timestamps: true,
     }
   );

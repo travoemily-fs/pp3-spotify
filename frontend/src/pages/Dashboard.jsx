@@ -1,8 +1,7 @@
 // import react components
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 // import grommet components
-import { Box, Grid, Text } from "grommet";
+import { Box, Grid } from "grommet";
 // import needed components
 import AppHeader from "../components/AppHeader";
 import Search from "../components/Search";
@@ -17,12 +16,14 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   // create state for chosen track
   const [selectedTrack, setSelectedTrack] = useState(null);
+  // set player to default for now
+  const [view, setView] = useState("player");
 
   // fetch the token that spotify sends
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
-    // check for tokens and assignments them
+    // check for tokens and assign them
     if (token) {
       localStorage.setItem("token", token);
       // clean up the return
@@ -38,17 +39,8 @@ export default function Dashboard() {
     // bring in token saved in local storage
     const token = localStorage.getItem("token");
 
-    // begin try/catch block for error handling
     try {
-      // create a dynamic url that encodes search results by pulling in .env variables
-      console.log(
-        "Requesting:",
-        `${import.meta.env.VITE_BACKEND_URL}/api/search?q=${encodeURIComponent(
-          query
-        )}`
-      );
-      console.log("Token in use:", token);
-
+      // create a dynamic url that encodes search results
       const res = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/api/search?q=${encodeURIComponent(
           query
@@ -58,31 +50,25 @@ export default function Dashboard() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          credentials: "include", // make sure u include ur headers
+          credentials: "include",
         }
       );
 
       // check for errors
       if (!res.ok) throw new Error("Search failed.");
-      // print search results
       const data = await res.json();
       setResults(data);
       setView("results");
     } catch (err) {
-      // log console error
       console.error(err);
-      // display error for user
       setError("Search failed... please try again!");
     } finally {
       setLoading(false);
     }
   };
 
-  // set player to default for now
-  const [view, setView] = useState("player");
-
   return (
-    <Box fill direction="column" width="100vw" pad="none" margin="none">
+    <Box fill direction="column"  pad="none" margin="none">
       <AppHeader />
       <Box fill="horizontal">
         <Grid
@@ -96,12 +82,7 @@ export default function Dashboard() {
           <Box gridArea="search" align="center" justify="center" pad="large">
             <Search onSearch={handleSearch} />
           </Box>
-          <Box
-            gridArea="main"
-            background="primaryBackground"
-            pad="medium"
-            align="center"
-            justify="center">
+          <Box gridArea="main" pad="medium" align="center" justify="center">
             {view === "results" && (
               <Results
                 results={results}
@@ -113,7 +94,7 @@ export default function Dashboard() {
             )}
 
             {view === "player" && selectedTrack && (
-              <Player track={selectedTrack} />
+              <Player track={selectedTrack} setView={setView} />
             )}
           </Box>
         </Grid>

@@ -22,7 +22,7 @@
 
 ## ℹ️ Project Overview
 
-This project utilizes the Spotify Web API to create a fullstack application that lets users search for tracks, albums, and artists, authenticate via Spotify, and build custom playlists.
+This project utilizes the Spotify Web API to create a fullstack application that lets users search for tracks, albums, and artists using Spotify's expansive database.
 
 It uses:
 
@@ -52,7 +52,7 @@ This application requires the following software & packages installed on your de
 - NodeJs
 - Yarn
 - NPM
-- Chrome (recommended) _or_ Firefox, Opera GX, Edge, Safari
+- Chrome or Opera GX (most all modern browsers will suffice)
 
 **For Mac OS users:**
 
@@ -159,10 +159,3 @@ Visit [http://localhost:3000](http://localhost:3000) to log in.
 - [Docker Compose Docs](https://docs.docker.com/compose/)
 - [Wait-for-it Script](https://github.com/vishnubob/wait-for-it)
 - [JWT Reference](https://jwt.io/introduction)
-
-## 🎨 Components
-
-- [Animated Background by @P1N2O](https://codepen.io/P1N2O/pen/pyBNzX)
-- [Grommet UI Components](https://v2.grommet.io/components)
-- React Icons & Custom CSS Modules
-

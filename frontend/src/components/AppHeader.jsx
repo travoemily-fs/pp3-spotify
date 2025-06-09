@@ -25,7 +25,7 @@ export default function AppHeader() {
             <Text
             style={{
               fontWeight:"800",
-              textShadow:".5px .5px 0px rgba(42, 42, 42, 0.29)",
+              textShadow:"0px 0px 5px rgba(248, 248, 248, 0.33)",
               letterSpacing:"-.5px",
               fontSize:"1.4rem"
             }}>
@@ -37,7 +37,8 @@ export default function AppHeader() {
               marginLeft:"4rem",
               marginTop:".5rem",
               color:"#3effa8",
-              fontStyle:"italic"
+              fontStyle:"italic",
+              textShadow:"0px 0px 5px rgba(62, 255, 168, 0.53)"
             }}>
               find, create, and share your spotify playlists.
             </Text>
