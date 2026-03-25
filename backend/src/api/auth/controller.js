@@ -21,19 +21,49 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 // login handler
 const loginHandler = (req, res) => {
-  // define spotify scope
-  const scope = "user-library-modify user-read-private user-read-email";
-  // use URLSearchParams to build out query string
-  const params = new URLSearchParams({
-    response_type: "code",
-    client_id: CLIENT_ID,
-    scope,
-    redirect_uri: REDIRECT_URI,
-  });
-  // create authorization url using params defined above
-  const authUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;
-  // redirect user
-  res.redirect(authUrl);
+  console.log("🔐 LOGIN ROUTE HIT");
+
+  console.log("CLIENT_ID:", CLIENT_ID);
+  console.log("REDIRECT_URI:", REDIRECT_URI);
+
+  // guard clause to prevent hanging
+  if (!CLIENT_ID || !REDIRECT_URI) {
+    console.error("Missing Spotify environment variables");
+
+    return res.status(500).json({
+      error: "Server misconfigured",
+      details: {
+        CLIENT_ID: CLIENT_ID ? "OK" : "MISSING",
+        REDIRECT_URI: REDIRECT_URI ? "OK" : "MISSING",
+      },
+    });
+  }
+
+  try {
+    // define spotify scope
+    const scope = "user-library-modify user-read-private user-read-email";
+
+    // build query string
+    const params = new URLSearchParams({
+      response_type: "code",
+      client_id: CLIENT_ID,
+      scope,
+      redirect_uri: REDIRECT_URI,
+    });
+
+    const authUrl = `https://accounts.spotify.com/authorize?${params.toString()}`;
+
+    console.log("Redirecting to Spotify:", authUrl);
+
+    return res.redirect(authUrl);
+  } catch (err) {
+    console.error("Login handler error:", err.message);
+
+    return res.status(500).json({
+      error: "Login failed",
+      details: err.message,
+    });
+  }
 };
 
 // callback handler
@@ -47,7 +77,7 @@ const callbackHandler = async (req, res) => {
   });
   // declare authorization header w/ client info, use buffer method to encode binary data to base64
   const authHeader = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString(
-    "base64"
+    "base64",
   );
   // set up response token as an URL-encoded string
   try {
@@ -60,7 +90,7 @@ const callbackHandler = async (req, res) => {
           "Content-Type": "application/x-www-form-urlencoded",
           Authorization: `Basic ${authHeader}`,
         },
-      }
+      },
     );
     // get spotify access_token & refresh_token if initial response passes
     const { access_token, refresh_token } = response.data;
@@ -104,7 +134,7 @@ const callbackHandler = async (req, res) => {
     // check for response data from spotify to log, otherwise print generic error
     console.error(
       "Token exchange error encountered:",
-      err.response?.data || err.message
+      err.response?.data || err.message,
     );
     // throw 500 error status
     res.status(500).send("Failed to exchange given code for token.");
