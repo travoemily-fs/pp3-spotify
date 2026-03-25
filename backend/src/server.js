@@ -1,87 +1,69 @@
-// pull in needed imports
-console.log("SERVER FILE LOADED");
+// server debug
+console.log("🚀 SERVER FILE LOADED");
+
 require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
 
+// middleware
 app.use(express.json());
 
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://your-vercel-app.vercel.app"],
+    credentials: true,
+  }),
+);
+
+// test route
 app.get("/test", (req, res) => {
   console.log("✅ TEST ROUTE HIT");
   res.send("Test route works");
 });
 
-// allow frontend requests
-app.use(
-  cors({
-    origin: [
-      "http://localhost:3000",
-      "https://your-vercel-app.vercel.app", // replace later
-    ],
-    credentials: true,
-  }),
-);
-
-// pull in authorization routes
+// routes
 const authRoutes = require("./api/auth");
-// pull in search routes
 const searchRoutes = require("./api/search");
-// pull in playlist routes
 const playlistRoutes = require("./api/playlist");
 
-// pull in db
+app.use("/api/auth", authRoutes);
+app.use("/api/search", searchRoutes);
+app.use("/api/playlist", playlistRoutes);
+
+// root
+app.get("/", (req, res) => {
+  res.send("Server is running");
+});
+
+// error handling
+const { errorHandler } = require("./api/auth/middleware");
+
+app.use((req, res) => {
+  res.status(404).json({ error: "Not found" });
+});
+
+app.use(errorHandler);
+
+// starts server immediately
+const PORT = process.env.PORT || 3001;
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server is listening on port ${PORT}`);
+});
+
+// connect DB AFTER server starts
 const db = require("./db");
 const sequelize = db.sequelize;
 
-// pull in global error handler
-const { errorHandler } = require("./api/auth/middleware");
-
-// pull in .env variables
-const PORT = process.env.PORT || 3001;
-
-// iife holding server startup logic
 (async () => {
   try {
-    try {
-      await sequelize.authenticate();
-      console.log("Successfully connected to database!");
+    await sequelize.authenticate();
+    console.log("DB connected");
 
-      await sequelize.sync({ alter: true });
-      console.log("Tables synced successfully with models.");
-    } catch (dbErr) {
-      console.warn(
-        "Database connection failed, continuing anyway:",
-        dbErr.message,
-      );
-    }
-
-    // registers routes
-    app.use("/api/auth", authRoutes);
-    app.use("/api/search", searchRoutes);
-    app.use("/api/playlist", playlistRoutes);
-
-    // verify server is live
-    app.get("/", (req, res) => {
-      res.send(`Server is up and running on port ${PORT}`);
-    });
-
-    // 404 fallback
-    app.use((req, res, next) => {
-      res.status(404).json({
-        error: "Not found",
-      });
-    });
-
-    // global error handler
-    app.use(errorHandler);
-
-    //  bind to 0.0.0.0 for Railway
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`Server is listening on port ${PORT}`);
-    });
+    await sequelize.sync({ alter: true });
+    console.log("DB synced");
   } catch (err) {
-    console.error("Server failed to start:", err.message);
-    process.exit(1);
+    console.warn("DB failed (non-blocking):", err.message);
   }
 })();
