@@ -1,10 +1,16 @@
 // pull in needed imports
+console.log("SERVER FILE LOADED");
 require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
 
 app.use(express.json());
+
+app.get("/test", (req, res) => {
+  console.log("✅ TEST ROUTE HIT");
+  res.send("Test route works");
+});
 
 // allow frontend requests
 app.use(
