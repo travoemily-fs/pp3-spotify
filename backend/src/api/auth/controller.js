@@ -68,76 +68,68 @@ const loginHandler = (req, res) => {
 
 // callback handler
 const callbackHandler = async (req, res) => {
-  const code = req.query.code || null;
-  // set up access token request
+  const code = req.query.code;
+
+  if (!code) {
+    return res.status(400).send("No code provided.");
+  }
+
   const body = new URLSearchParams({
     grant_type: "authorization_code",
     code,
     redirect_uri: REDIRECT_URI,
   });
-  // declare authorization header w/ client info, use buffer method to encode binary data to base64
+
   const authHeader = Buffer.from(`${CLIENT_ID}:${CLIENT_SECRET}`).toString(
     "base64",
   );
-  // set up response token as an URL-encoded string
+
   try {
     const response = await axios.post(
       "https://accounts.spotify.com/api/token",
       body.toString(),
       {
-        // define content type and send authHeader through
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           Authorization: `Basic ${authHeader}`,
         },
       },
     );
-    // get spotify access_token & refresh_token if initial response passes
+
     const { access_token, refresh_token } = response.data;
-    // checks for missing access tokens
+
     if (!access_token) {
-      // throws 400 bad request error
       return res.status(400).send("No access token received.");
     }
+
     console.log("Access token granted:", access_token);
 
-    // fetch user data
+    // fetch spotify user profile
     const profileData = await axios.get("https://api.spotify.com/v1/me", {
       headers: {
         Authorization: `Bearer ${access_token}`,
       },
     });
-    // extract the needed fields
+
     const { id: spotifyId, email } = profileData.data;
-    // create user / add user to my database
-    const [user, created] = await User.findOrCreate({
-      where: { spotifyId },
-      defaults: {
-        email,
-        accessToken: access_token,
-        refreshToken: refresh_token,
-      },
+
+    // TEMPORARY: skip database persistence until deployed DB is working
+    const token = createToken({
+      id: spotifyId,
+      spotifyId,
+      email: email || "no-email@spotify.local",
     });
 
-    // updates tokens after repeated logins
-    if (!created) {
-      await user.update({
-        accessToken: access_token,
-        refreshToken: refresh_token,
-      });
-    }
-    const token = createToken(user);
-    // sends success redirect response
     console.log("Generated JWT:", token);
-    res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
+
+    return res.redirect(`${process.env.FRONTEND_URL}/dashboard?token=${token}`);
   } catch (err) {
-    // check for response data from spotify to log, otherwise print generic error
     console.error(
       "Token exchange error encountered:",
       err.response?.data || err.message,
     );
-    // throw 500 error status
-    res.status(500).send("Failed to exchange given code for token.");
+
+    return res.status(500).send("Failed to exchange given code for token.");
   }
 };
 
