@@ -1,5 +1,5 @@
 // server debug
-console.log("🚀 SERVER FILE LOADED");
+console.log("server loaded!");
 
 require("dotenv").config();
 const express = require("express");
@@ -11,14 +11,14 @@ app.use(express.json());
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://your-vercel-app.vercel.app"],
+    origin: ["http://localhost:3000", "https://playlister-kappa.vercel.app"],
     credentials: true,
   }),
 );
 
 // test route
 app.get("/test", (req, res) => {
-  console.log("✅ TEST ROUTE HIT");
+  console.log("TEST ROUTE HITS");
   res.send("Test route works");
 });
 
