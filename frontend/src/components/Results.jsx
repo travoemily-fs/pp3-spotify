@@ -11,7 +11,9 @@ export default function Results({
   // handle loading and error states
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text>{error}</Text>;
-  if (!results || !results.tracks || results.tracks.length === 0) {
+
+  // 🔥 FIX: results is now an ARRAY (tracks.items), not results.tracks
+  if (!results || results.length === 0) {
     return <Text>No results found.</Text>;
   }
 
@@ -68,7 +70,8 @@ export default function Results({
       pad="medium"
       width="100%"
       height="100%">
-      {results.tracks.map((track) => (
+      {/* 🔥 FIX: map directly over results */}
+      {results.map((track) => (
         <Button key={track.id} onClick={() => handleSelect(track)} plain>
           <Box
             direction="row"
@@ -95,17 +98,21 @@ export default function Results({
               style={{ borderRadius: "8px" }}
             />
             <Box align="center" justify="center">
-              <Text weight="bold" style={{ 
-                letterSpacing:"0px",
-                textShadow: "0 0 1px #ffff" }}>
+              <Text
+                weight="bold"
+                style={{
+                  letterSpacing: "0px",
+                  textShadow: "0 0 1px #ffff",
+                }}>
                 {track.name}
               </Text>
               <Text
                 size="small"
                 color="#3effa8"
-                style={{ textShadow: "0 0 4px rgba(62, 255, 168, 0.3)",
-                  letterSpacing:"0px"
-                 }}>
+                style={{
+                  textShadow: "0 0 4px rgba(62, 255, 168, 0.3)",
+                  letterSpacing: "0px",
+                }}>
                 {track.artists.map((artist) => artist.name).join(", ")}
               </Text>
             </Box>

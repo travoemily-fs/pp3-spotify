@@ -10,12 +10,14 @@ import Player from "../components/Player";
 
 // begin dashboard setup
 export default function Dashboard() {
-  // useState for search results
-  const [results, setResults] = useState(null);
+  // 🔥 FIX: results should be an ARRAY, not null
+  const [results, setResults] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+
   // create state for chosen track
   const [selectedTrack, setSelectedTrack] = useState(null);
+
   // set player to default for now
   const [view, setView] = useState("player");
 
@@ -23,7 +25,7 @@ export default function Dashboard() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
-    // check for tokens and assign them
+
     if (token) {
       localStorage.setItem("token", token);
       // clean up the return
@@ -36,14 +38,12 @@ export default function Dashboard() {
     setLoading(true);
     setError(null);
 
-    // bring in token saved in local storage
     const token = localStorage.getItem("token");
 
     try {
-      // create a dynamic url that encodes search results
       const res = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/api/search?q=${encodeURIComponent(
-          query
+          query,
         )}`,
         {
           method: "GET",
@@ -51,13 +51,18 @@ export default function Dashboard() {
             Authorization: `Bearer ${token}`,
           },
           credentials: "include",
-        }
+        },
       );
 
-      // check for errors
       if (!res.ok) throw new Error("Search failed.");
+
       const data = await res.json();
-      setResults(data);
+
+      console.log("🔥 SEARCH RESPONSE:", data);
+
+      // 🔥🔥🔥 THIS IS THE CRITICAL FIX
+      setResults(data.tracks.items);
+
       setView("results");
     } catch (err) {
       console.error(err);
@@ -68,8 +73,9 @@ export default function Dashboard() {
   };
 
   return (
-    <Box fill direction="column"  pad="none" margin="none">
+    <Box fill direction="column" pad="none" margin="none">
       <AppHeader />
+
       <Box fill="horizontal">
         <Grid
           fill
@@ -82,6 +88,7 @@ export default function Dashboard() {
           <Box gridArea="search" align="center" justify="center" pad="large">
             <Search onSearch={handleSearch} />
           </Box>
+
           <Box gridArea="main" pad="medium" align="center" justify="center">
             {view === "results" && (
               <Results
