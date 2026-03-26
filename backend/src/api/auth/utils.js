@@ -14,19 +14,18 @@ const jwt = require("jsonwebtoken");
 
 // createToken
 const createToken = (user) => {
-  // define payload
   const payload = {
     id: user.id,
     spotifyId: user.spotifyId,
     email: user.email,
+    accessToken: user.accessToken, 
+    refreshToken: user.refreshToken, 
   };
 
-  // create and return jwt
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: "1h",
   });
 };
-
 // verifyToken
 const verifyToken = (authHeader) => {
   // if no authHeader sent, deny user access

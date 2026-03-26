@@ -8,7 +8,6 @@ meHandler
 // pull in needed imports
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
-const { User } = require("../../db");
 const { createToken, verifyToken, getRefreshToken } = require("./utils");
 
 // pull in env variables
@@ -21,7 +20,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 // login handler
 const loginHandler = (req, res) => {
-  console.log("🔐 LOGIN ROUTE HIT");
+  console.log("LOGIN ROUTE HIT");
 
   console.log("CLIENT_ID:", CLIENT_ID);
   console.log("REDIRECT_URI:", REDIRECT_URI);
@@ -114,11 +113,13 @@ const callbackHandler = async (req, res) => {
     const { id: spotifyId, email } = profileData.data;
 
     // TEMPORARY: skip database persistence until deployed DB is working
-    const token = createToken({
-      id: spotifyId,
-      spotifyId,
-      email: email || "no-email@spotify.local",
-    });
+const token = createToken({
+  id: spotifyId,
+  spotifyId,
+  email: email || "no-email@spotify.local",
+  accessToken: access_token, 
+  refreshToken: refresh_token,
+});
 
     console.log("Generated JWT:", token);
 
@@ -157,41 +158,22 @@ const meHandler = (req, res) => {
 
 // refresh token handler
 const refreshHandler = async (req, res) => {
-  // grab auth header
-  const authHeader = req.headers.authorization;
-
-  // begin try + catch block for verifying refresh token
   try {
-    // pull in verified token and user info
+    const authHeader = req.headers.authorization;
     const verified = verifyToken(authHeader);
-    const user = await User.findByPk(verified.id);
 
-    // define refresh token
-    const data = await getRefreshToken(user.refreshToken);
+    const data = await getRefreshToken(verified.refreshToken);
 
-    // if refresh token is given, pull original access token and update it
-    if (data.refresh_token) {
-      await user.update({
-        refreshToken: data.refresh_token,
-      });
-    }
-
-    if (data.access_token) {
-      await user.update({
-        accessToken: data.access_token,
-      });
-    }
-
-    // creates and sends new jwt
-    const newJwt = createToken(user);
-    res.json({
-      token: newJwt,
+    const newJwt = createToken({
+      ...verified,
+      accessToken: data.access_token,
+      refreshToken: data.refresh_token || verified.refreshToken,
     });
+
+    res.json({ token: newJwt });
   } catch (err) {
-    // handle w/ a 403 forbidden error
     res.status(403).json({
-      error: "Failed to get refresh token",
-      // provides extra debugging info on what went wrong
+      error: "Failed to refresh token",
       details: err.message,
     });
   }
