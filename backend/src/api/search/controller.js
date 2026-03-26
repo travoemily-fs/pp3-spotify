@@ -1,6 +1,7 @@
 const axios = require("axios");
 
 const searchHandler = async (req, res) => {
+  console.log("SEARCH USER:", req.user);
   console.log("Search route hit");
 
   try {
