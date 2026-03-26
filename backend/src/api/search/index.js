@@ -11,7 +11,7 @@ const { searchHandler } = require("./controller");
 const { validateTokenStatus } = require("../auth/middleware");
 
 // define routes
-router.get("/", validateTokenStatus, searchHandler);
+router.get("/", searchHandler);
 
 // export routes
 module.exports = router;

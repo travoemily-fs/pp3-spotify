@@ -1,28 +1,27 @@
-/* 
-primary search routes are housed here
-*/
-
 // pull in needed imports
 const axios = require("axios");
-// pull in user model
-const { User } = require("../../db");
-// pull in token verification handler
-const { verifyToken } = require("../auth/utils");
 
-// begin search handlers
-
-// searchHandler
+// search handler
 const searchHandler = async (req, res) => {
-  console.log("Search route hit!");
-  console.log("Headers received:", req.headers);
-  console.log("Query:", req.query);
+  console.log("search route hit");
 
   try {
-    // grab query string & authorization header
     const authHeader = req.headers.authorization;
     const searchQuery = req.query.q;
 
-    // define allowed search types
+    // guard clauses
+    if (!authHeader) {
+      return res.status(401).json({ error: "Missing Authorization header" });
+    }
+
+    if (!searchQuery) {
+      return res.status(400).json({ error: "Missing search query" });
+    }
+
+    // extract token
+    const token = authHeader.split(" ")[1];
+
+    // allowed search types
     const allowedTypes = [
       "album",
       "artist",
@@ -33,56 +32,40 @@ const searchHandler = async (req, res) => {
       "audiobook",
     ];
 
-    // set types a user will search for
     const singleType = req.query.type || "track";
 
-    // split type array into a string to filter through accepted types
     const searchTypeArray = singleType
       .split(",")
       .map((type) => type.trim().toLowerCase())
       .filter((type) => allowedTypes.includes(type));
 
-    // verify token and get user ID
-    const verified = verifyToken(authHeader);
-    const user = await User.findByPk(verified.id);
-
-    // failsafe for null user
-    if (!user) {
-      return res.status(404).json({
-        error: "Failed to locate user.",
-      });
-    }
-
-    // set query params
-    const queryParams = {
-      q: searchQuery,
-      type: searchTypeArray.join(","),
-      limit: 20,
-    };
-
-    // send search to spotify w/ user's token
+    // call Spotify directly
     const response = await axios.get("https://api.spotify.com/v1/search", {
       headers: {
-        Authorization: `Bearer ${user.accessToken}`,
+        Authorization: `Bearer ${token}`,
       },
-      params: queryParams,
+      params: {
+        q: searchQuery,
+        type: searchTypeArray.join(","),
+        limit: 20,
+      },
     });
 
-    // respond w/ data
-    console.log(response.data);
-    res.json({
+    console.log("spotify search success");
+
+    return res.json({
       artists: response.data.artists?.items || [],
       albums: response.data.albums?.items || [],
       tracks: response.data.tracks?.items || [],
     });
   } catch (err) {
-    console.error("Error in searchHandler:", err);
-    res.status(500).json({
-      error: "Search handler failed.",
-      details: err.message,
+    console.error("search error:", err.response?.data || err.message);
+
+    return res.status(500).json({
+      error: "Search failed",
+      details: err.response?.data || err.message,
     });
   }
 };
 
-// export handler
 module.exports = { searchHandler };
