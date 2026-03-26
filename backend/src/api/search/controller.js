@@ -5,22 +5,21 @@ const searchHandler = async (req, res) => {
   console.log("Search route hit");
 
   try {
-    const authHeader = req.headers.authorization;
     const query = req.query.q;
 
-    if (!authHeader) {
-      return res.status(401).json({ error: "Missing auth header" });
+    if (!req.user || !req.user.accessToken) {
+      return res.status(401).json({ error: "Missing access token" });
     }
 
     if (!query) {
       return res.status(400).json({ error: "Missing query" });
     }
 
-    const token = authHeader.split(" ")[1];
+    const token = req.user.accessToken; 
 
     const response = await axios.get("https://api.spotify.com/v1/search", {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`, 
       },
       params: {
         q: query,
