@@ -94,6 +94,32 @@ export default function Player({ track, setView }) {
     }
   };
 
+const addTrackToPlaylist = async (playlistId) => {
+  try {
+    const res = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/api/playlist/add`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          playlistId,
+          trackUri: `spotify:track:${track.id}`,
+        }),
+      },
+    );
+
+    if (!res.ok) throw new Error("Failed to add track");
+
+    alert("Track added to playlist!");
+  } catch (err) {
+    console.error(err);
+    alert("Could not add track.");
+  }
+};  
+
   const handleNext = async () => {
     try {
       const res = await fetch(
@@ -145,7 +171,21 @@ export default function Player({ track, setView }) {
         {/* add to playlists */}
         <Button icon={<Add />} onClick={handleFetchPlaylists} />
 
-        <Button label="Back" onClick={() => setView("search")} />
+        <Button
+          label="Back"
+          onClick={() => setView("results")}
+          plain
+          style={{
+            color: "#3effa8",
+            fontWeight: "600",
+            padding: "8px 16px",
+            borderRadius: "12px",
+            border: "1px solid rgba(62, 255, 168, 0.4)",
+            background: "rgba(255, 255, 255, 0.02)",
+            textShadow: "0 0 6px rgba(62, 255, 168, 0.5)",
+            backdropFilter: "blur(6px)",
+          }}
+        />
       </Box>
 
       {/* track info */}
@@ -174,14 +214,54 @@ export default function Player({ track, setView }) {
 
       {/* playlist list */}
       {showPlaylists && (
-        <Box gap="small" margin={{ top: "medium" }}>
-          <Text weight="bold">Your Playlists</Text>
+        <Box margin={{ top: "medium" }} width="100%" align="center" gap="small">
+          <Text
+            weight="bold"
+            size="medium"
+            style={{
+              textShadow: "0 0 6px rgba(255,255,255,0.2)",
+            }}>
+            Your Playlists
+          </Text>
 
-          {playlists.map((playlist) => (
-            <Box key={playlist.id}>
-              <Text>{playlist.name}</Text>
-            </Box>
-          ))}
+          <Box
+            width="100%"
+            gap="xsmall"
+            style={{
+              maxHeight: "220px",
+              overflowY: "auto",
+              padding: "10px",
+            }}>
+            {playlists.map((playlist) => (
+              <Box
+                key={playlist.id}
+                onClick={() => addTrackToPlaylist(playlist.id)}
+                pad="small"
+                round="small"
+                direction="row"
+                justify="between"
+                padding={{ horizontal: "medium" }}
+                align="center"
+                style={{
+                  border: "1px solid rgba(62, 255, 168, 0.25)",
+                  background: "rgba(255,255,255,0.02)",
+                  backdropFilter: "blur(6px)",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.boxShadow =
+                    "0 0 10px rgba(62,255,168,0.4)";
+                  e.currentTarget.style.transform = "scale(1.02)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.boxShadow = "none";
+                  e.currentTarget.style.transform = "scale(1)";
+                }}>
+                <Text size="small">{playlist.name}</Text>
+              </Box>
+            ))}
+          </Box>
         </Box>
       )}
     </Box>
