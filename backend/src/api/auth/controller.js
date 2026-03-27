@@ -40,7 +40,16 @@ const loginHandler = (req, res) => {
 
   try {
     // define spotify scope
-    const scope = "user-library-modify user-read-private user-read-email";
+    const scope = `
+  user-library-modify
+  user-read-private
+  user-read-email
+  playlist-read-private
+  playlist-modify-public
+  playlist-modify-private
+`
+      .replace(/\s+/g, " ")
+      .trim();
 
     // build query string
     const params = new URLSearchParams({
@@ -113,13 +122,13 @@ const callbackHandler = async (req, res) => {
     const { id: spotifyId, email } = profileData.data;
 
     // TEMPORARY: skip database persistence until deployed DB is working
-const token = createToken({
-  id: spotifyId,
-  spotifyId,
-  email: email || "no-email@spotify.local",
-  accessToken: access_token, 
-  refreshToken: refresh_token,
-});
+    const token = createToken({
+      id: spotifyId,
+      spotifyId,
+      email: email || "no-email@spotify.local",
+      accessToken: access_token,
+      refreshToken: refresh_token,
+    });
 
     console.log("Generated JWT:", token);
 
