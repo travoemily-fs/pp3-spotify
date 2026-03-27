@@ -76,6 +76,46 @@ export default function Player({ track, setView }) {
     }
   };
 
+  // handle next track
+  const handleNext = async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/playback/next`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      if (!res.ok) throw new Error("Next failed");
+    } catch (err) {
+      console.error("Next error:", err);
+      alert("Failed to skip track.");
+    }
+  };
+
+  // handle previous track
+  const handlePrevious = async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/playback/previous`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      if (!res.ok) throw new Error("Previous failed");
+    } catch (err) {
+      console.error("Previous error:", err);
+      alert("Failed to go back.");
+    }
+  };
+
   // failsafe guard
   if (!track) return null;
 
@@ -169,7 +209,7 @@ export default function Player({ track, setView }) {
             icon={<RxTrackPrevious color="white" />}
             plain
             disabled={!hasPreview}
-            onClick={() => alert("Back")}
+            onClick={handlePrevious}
           />
 
           {/* play/pause (disabled if no preview) */}
@@ -191,14 +231,14 @@ export default function Player({ track, setView }) {
             icon={<RxTrackNext color="white" />}
             plain
             disabled={!hasPreview}
-            onClick={() => alert("Next")}
+            onClick={handleNext}
           />
         </Box>
 
         {/* preview message */}
         {!hasPreview && (
           <Text size="xsmall" color="#3effa8">
-            ⚠️ Preview not available for this track
+            Preview not available for this track
           </Text>
         )}
 
