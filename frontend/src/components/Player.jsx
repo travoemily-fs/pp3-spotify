@@ -8,9 +8,10 @@ import { RxTrackNext, RxTrackPrevious } from "react-icons/rx";
 
 export default function Player({ track, setView }) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [playlists, setPlaylists] = useState([]); // 🔥 NEW
+  const [showPlaylists, setShowPlaylists] = useState(false); // 🔥 NEW
   const audioRef = useRef(null);
 
-  // handle audio reset if track is changed
   useEffect(() => {
     const audio = audioRef.current;
 
@@ -22,7 +23,6 @@ export default function Player({ track, setView }) {
     setIsPlaying(false);
   }, [track]);
 
-  // handles pausing audio if track is unmounted
   useEffect(() => {
     const audio = audioRef.current;
 
@@ -33,7 +33,6 @@ export default function Player({ track, setView }) {
     };
   }, []);
 
-  // handle toggling audio between play and pause
   const handleTogglePlay = () => {
     if (!track.preview_url) return;
 
@@ -48,14 +47,8 @@ export default function Player({ track, setView }) {
     setIsPlaying(!isPlaying);
   };
 
-  // handle favoriting the track
   const handleFavorite = async () => {
-    console.log("Sending track ID to favorite:", track.id);
-
     try {
-      console.log("Token being sent:", localStorage.getItem("token"));
-      console.log("Track ID being sent:", track.id);
-
       const res = await fetch(
         `${import.meta.env.VITE_BACKEND_URL}/api/playlist/fave`,
         {
@@ -76,7 +69,31 @@ export default function Player({ track, setView }) {
     }
   };
 
-  // handle next track
+  // fetch playlists
+  const handleFetchPlaylists = async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/playlist`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      if (!res.ok) throw new Error("Failed to fetch playlists");
+
+      const data = await res.json();
+      console.log("PLAYLISTS:", data);
+
+      setPlaylists(data.items || []);
+      setShowPlaylists(true);
+    } catch (err) {
+      console.error(err);
+      alert("Could not fetch playlists.");
+    }
+  };
+
   const handleNext = async () => {
     try {
       const res = await fetch(
@@ -91,12 +108,11 @@ export default function Player({ track, setView }) {
 
       if (!res.ok) throw new Error("Next failed");
     } catch (err) {
-      console.error("Next error:", err);
+      console.error(err);
       alert("Failed to skip track.");
     }
   };
 
-  // handle previous track
   const handlePrevious = async () => {
     try {
       const res = await fetch(
@@ -111,160 +127,63 @@ export default function Player({ track, setView }) {
 
       if (!res.ok) throw new Error("Previous failed");
     } catch (err) {
-      console.error("Previous error:", err);
+      console.error(err);
       alert("Failed to go back.");
     }
   };
 
-  // failsafe guard
   if (!track) return null;
 
   const hasPreview = !!track.preview_url;
 
   return (
-    <Box
-      direction="column"
-      justify="between"
-      align="center"
-      gap="medium"
-      pad="medium"
-      overflow="hidden"
-      background="rgba(255, 255, 255, 0.01)"
-      round="medium"
-      style={{
-        boxShadow:
-          "0 0 11px rgba(29, 185, 84, 0.2), inset 0 0 5px rgba(29, 185, 84, 0.2), inset 0 0 14px rgba(153, 197, 169, 0.2)",
-        maxWidth: "400px",
-        width: "40%",
-        border: "1px solid rgba(29, 185, 84, 0.35)",
-      }}>
-      {/* top accent bg w/ fave + add to playlist btns */}
-      <Box direction="row" width="100%" justify="between" pad="small">
+    <Box direction="column" align="center" gap="medium" pad="medium">
+      {/* top bar */}
+      <Box direction="row" width="100%" justify="between">
+        <Button icon={<Favorite />} onClick={handleFavorite} />
+
+        {/* add to playlists */}
+        <Button icon={<Add />} onClick={handleFetchPlaylists} />
+
+        <Button label="Back" onClick={() => setView("search")} />
+      </Box>
+
+      {/* track info */}
+      <Box direction="row" gap="small">
+        <Image src={track.albumArt} width="90px" />
+        <Box>
+          <Text>{track.title}</Text>
+          <Text size="small">{track.artists.join(", ")}</Text>
+        </Box>
+      </Box>
+
+      {/* controls */}
+      <Box direction="row" gap="small">
+        <Button onClick={handlePrevious} icon={<RxTrackPrevious />} />
         <Button
-          icon={<Favorite color="white" />}
-          plain
-          onClick={handleFavorite}
-          style={{ paddingLeft: "15px" }}
+          onClick={handleTogglePlay}
+          icon={isPlaying ? <Pause /> : <Play />}
+          disabled={!hasPreview}
         />
-
-        <Box alignSelf="start">
-          <Button
-            label="Go back to search"
-            onClick={() => setView("search")}
-            plain
-            style={{
-              fontSize: "14px",
-              color: "#1db954",
-              marginBottom: "0.5rem",
-            }}
-          />
-        </Box>
+        <Button onClick={handleNext} icon={<RxTrackNext />} />
       </Box>
 
-      {/* album art + track info */}
-      <Box
-        direction="row"
-        pad="medium"
-        gap="small"
-        style={{ paddingBottom: "10px" }}>
-        <Image
-          src={track.albumArt}
-          alt={`${track.title} album art`}
-          width="90px"
-          elevation="small"
-          style={{ borderRadius: "8px", opacity: ".9" }}
-        />
+      {!hasPreview && <Text size="small">No preview available</Text>}
 
-        <Box style={{ textAlign: "left", marginLeft: ".75rem" }}>
-          <Text
-            size="small"
-            style={{
-              color: "#3effa8",
-              textShadow: "0px 0px 5px rgba(62, 255, 168, 0.53)",
-            }}>
-            {track.artists.join(", ")}
-          </Text>
-          <Text weight="bold">{track.title}</Text>
-          <Text size="xsmall">{track.album}</Text>
+      {hasPreview && <audio ref={audioRef} src={track.preview_url} />}
+
+      {/* playlist list */}
+      {showPlaylists && (
+        <Box gap="small" margin={{ top: "medium" }}>
+          <Text weight="bold">Your Playlists</Text>
+
+          {playlists.map((playlist) => (
+            <Box key={playlist.id}>
+              <Text>{playlist.name}</Text>
+            </Box>
+          ))}
         </Box>
-      </Box>
-
-      {/* player controls */}
-      <Box width="100%" gap="small" pad={{ top: "small" }} align="center">
-        <Box
-          direction="row"
-          gap="small"
-          background="rgba(255, 255, 255, 0.04)"
-          elevation="small"
-          pad="small"
-          round="xlarge"
-          align="center"
-          justify="center"
-          style={{
-            backdropFilter: "blur(18px)",
-            paddingTop: "10px",
-          }}>
-          {/* previous */}
-          <Button
-            icon={<RxTrackPrevious color="white" />}
-            plain
-            disabled={!hasPreview}
-            onClick={handlePrevious}
-          />
-
-          {/* play/pause (disabled if no preview) */}
-          <Button
-            icon={
-              isPlaying ? (
-                <Pause color={hasPreview ? "white" : "dark-5"} />
-              ) : (
-                <Play color={hasPreview ? "white" : "dark-5"} />
-              )
-            }
-            plain
-            disabled={!hasPreview}
-            onClick={handleTogglePlay}
-          />
-
-          {/* next */}
-          <Button
-            icon={<RxTrackNext color="white" />}
-            plain
-            disabled={!hasPreview}
-            onClick={handleNext}
-          />
-        </Box>
-
-        {/* preview message */}
-        {!hasPreview && (
-          <Text size="xsmall" color="#3effa8">
-            Preview not available for this track
-          </Text>
-        )}
-
-        {/* progress bar */}
-        <Box
-          width="85%"
-          pad={{ horizontal: "small" }}
-          style={{ paddingBottom: "25px", paddingTop: "15px" }}>
-          <Box direction="row" justify="between">
-            <Text size=".7rem">0:00</Text>
-            <Text size=".7rem">{track.duration}</Text>
-          </Box>
-
-          <Box
-            background="rgba(255, 255, 255, 0.04)"
-            height="13px"
-            round
-            overflow="hidden"
-            margin={{ top: "xsmall" }}>
-            <Box width="35%" background="attnAccent" />
-          </Box>
-        </Box>
-
-        {/* hidden audio element */}
-        {hasPreview && <audio ref={audioRef} src={track.preview_url} />}
-      </Box>
+      )}
     </Box>
   );
 }

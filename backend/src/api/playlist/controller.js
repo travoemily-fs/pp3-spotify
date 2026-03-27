@@ -14,6 +14,40 @@ const axios = require("axios");
 
 // begin playlist routes
 
+// fetch user's playlists
+const getPlaylistsHandler = async (req, res) => {
+  // get user's access token via req.user
+  const token = req.user.accessToken;
+
+  if (!token) {
+    return res.status(401).json({
+      error: "Invalid or missing access token.",
+    });
+  }
+
+  try {
+    // call Spotify API to get user's playlists
+    const response = await axios.get(
+      "https://api.spotify.com/v1/me/playlists",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+
+    // send playlists back to frontend
+    res.status(200).json(response.data);
+  } catch (err) {
+    console.error("Get playlists error:", err.response?.data || err.message);
+
+    res.status(500).json({
+      error: "Failed to fetch playlists.",
+      details: err.response?.data || err.message,
+    });
+  }
+};
+
 // create playlist
 const createPlaylistHandler = async (req, res) => {
   // get user's access token via req.user
@@ -249,31 +283,25 @@ const sharePlaylistHandler = async (req, res) => {
 
 // favorite/like track
 const faveTrackHandler = async (req, res) => {
-  // extract track ids from req.body
   const { trackIds } = req.body;
 
-  // debug log to confirm receipt of track IDs
   console.log("faveTrackHandler called");
   console.log("Track IDs received:", trackIds);
 
-  // get token directly from JWT (NO DB LOOKUP 🚫)
   const token = req.user.accessToken;
 
-  // fallback for token errors
   if (!token) {
     return res.status(401).json({
       error: "Invalid or missing access token.",
     });
   }
 
-  // verify inputs like trackId, array input, and populated array
   if (!trackIds || !Array.isArray(trackIds) || trackIds.length === 0) {
     return res.status(400).json({
       error: "Trackids must be in a populated array.",
     });
   }
 
-  // begin try/catch block
   try {
     await axios.put(
       "https://api.spotify.com/v1/me/tracks",
@@ -301,6 +329,7 @@ const faveTrackHandler = async (req, res) => {
 
 // export routes
 module.exports = {
+  getPlaylistsHandler, 
   createPlaylistHandler,
   unfollowPlaylistHandler,
   updatePlaylistHandler,
